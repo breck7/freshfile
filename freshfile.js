@@ -11,12 +11,12 @@ else
 
 var ignoreHidden = true
 
-var SHOW_MAX = 10
-if (args.length == 2)
-  SHOW_MAX = parseFloat(args[1])
+var LIMIT = 10
+if (args.length >= 2)
+  LIMIT = parseFloat(args[1])
 
 var FILTER = null
-if (args.length == 3)
+if (args.length >= 3)
   FILTER = args[2]
 
 function scanDir (path) {
@@ -44,9 +44,10 @@ function scanDir (path) {
   all = _.sortBy(all, function(file){ return file[1] })
   // all = all.reverse()
   // show top 10
-  var count = (all.length > SHOW_MAX ? SHOW_MAX : all.length)
-  console.log(count + ' recently updated files:')
-  for (i = 0; i < count; i++) {
+  if (all.length < LIMIT)
+    LIMIT = all.length
+  console.log(LIMIT + ' recently updated files:')
+  for (i = 0; i < LIMIT; i++) {
     console.log(all[i][0] + ' ' + (all[i][1]/60000).toFixed(0) + ' minutes ago ')
   }
 }
