@@ -13,7 +13,7 @@ var ignoreHidden = true
 
 var SHOW_MAX = 10
 if (args.length == 2)
-  SHOW_MAX = args[1]
+  SHOW_MAX = parseFloat(args[1])
 
 var FILTER = null
 if (args.length == 3)
@@ -32,25 +32,21 @@ function scanDir (path) {
     if (ignoreHidden)
       files = _.filter(files, function (name) {return name.substr(0,1) != '.'})
     
-    if (FILTER)
-      files = _.filter(files, function (name) {return name == FILTER})
-    
     _.each(files, function (file, index, list) {
       var filepath = dir + '/' + file
       var stat = fs.statSync(filepath)
       if (stat.isDirectory())
         queue.push(filepath)
-      else {
+      else if (!FILTER || (FILTER && file == FILTER))
         all.push([filepath, now - stat.mtime])
-      }
     })
   }
   all = _.sortBy(all, function(file){ return file[1] })
   // all = all.reverse()
   // show top 10
-  var max = (all.length > SHOW_MAX ? SHOW_MAX : all.length)
-  console.log(max + ' recently updated files:')
-  for (i = 0; i < max; i++) {
+  var count = (all.length > SHOW_MAX ? SHOW_MAX : all.length)
+  console.log(count + ' recently updated files:')
+  for (i = 0; i < count; i++) {
     console.log(all[i][0] + ' ' + (all[i][1]/60000).toFixed(0) + ' minutes ago ')
   }
 }
